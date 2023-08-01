@@ -26,6 +26,6 @@ public class BankAccount {
     private AccountStatus status;
     @ManyToOne
     private Customer customer;
-    @OneToMany(mappedBy = "bankAccount")
+    @OneToMany(mappedBy = "bankAccount",fetch = FetchType.LAZY) //c mieux et creer un service pour recupere les autres datas
     private List<AccountOperations> accountOperations;
 }

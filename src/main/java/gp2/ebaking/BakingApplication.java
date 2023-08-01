@@ -1,9 +1,6 @@
 package gp2.ebaking;
 
-import gp2.ebaking.entities.AccountOperations;
-import gp2.ebaking.entities.CurrentAccount;
-import gp2.ebaking.entities.Customer;
-import gp2.ebaking.entities.SavingAccount;
+import gp2.ebaking.entities.*;
 import gp2.ebaking.enums.AccountStatus;
 import gp2.ebaking.enums.OperationType;
 import gp2.ebaking.repositories.AccountOperationsRepository;
@@ -25,7 +22,37 @@ public class BakingApplication {
 		SpringApplication.run(BakingApplication.class, args);
 	}
 
+
 	@Bean
+	CommandLineRunner commandLineRunner (BankAccountRepository bankAccountRepository) {
+		return args -> {
+			BankAccount bankAccount = bankAccountRepository.findById("36a250b0-4277-45c2-8ed4-fedfa67cd076").orElse(null);
+
+			if (bankAccount != null) {
+
+				System.out.println(bankAccount.getId());
+				//System.out.println(bankAccount.getAccountOperations());
+				System.out.println(bankAccount.getBalance());
+				System.out.println(bankAccount.getCustomer().getName());
+				System.out.println(bankAccount.getStatus());
+				System.out.println(bankAccount.getCreatedAt());
+				System.out.println(bankAccount.getClass().getSimpleName());
+				if (bankAccount instanceof CurrentAccount) {
+					System.out.println("over draft->" + ((CurrentAccount) bankAccount).getOverDraft());
+				} else if (bankAccount instanceof SavingAccount) {
+					System.out.println("Rate->" + ((SavingAccount) bankAccount).getInterestRate());
+
+				}
+				bankAccount.getAccountOperations().forEach(operation -> {
+					System.out.println("###########################################");
+					System.out.println(operation.getOperationDate() +"\t"+operation.getAmount()+"\t"+operation.getType());
+				});
+
+			}
+			;
+		};
+	};
+	//@Bean
 	CommandLineRunner start(CustomerRepository customerRepository, BankAccountRepository bankAccountRepository, AccountOperationsRepository accountOperationsRepository) {
 		return args ->{
 			Stream.of("Fabrice","Regine","Ethane").forEach(name->{
@@ -69,6 +96,7 @@ public class BakingApplication {
 
 
 			});
+
 		};
 
 	}
